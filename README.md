@@ -1,5 +1,7 @@
 # Task Management API
 
+[Try the Organiza demo](https://todolist-q73i.onrender.com)
+
 This Spring Boot REST API lets users register and create, list, and update their own tasks. Task endpoints use HTTP Basic authentication.
 
 ## Requirements
@@ -18,6 +20,8 @@ cd todolist
 ```
 
 On Windows, run `mvnw.cmd spring-boot:run` from the repository directory. The API listens on `http://localhost:8080`. It uses an in-memory H2 database, so users and tasks are reset when the app stops.
+
+Open `http://localhost:8080` in a browser to try **Organiza**, the demo frontend. Choose **Usar exemplos** to create sample tasks or **Nova tarefa** to add your own. The demo creates a temporary account per browser session and displays task times in your local timezone.
 
 In a second terminal, register a demo user and list their tasks:
 
@@ -41,6 +45,10 @@ docker run --rm -p 8080:8080 todolist
 
 To run the tests, use `./mvnw test` (`mvnw.cmd test` on Windows).
 
+## Deployment
+
+Run this repository as a Docker web service with the included `render.yaml` Blueprint. The health endpoint is `/actuator/health`. Treat the hosted app as a demo because its database is reset whenever the service restarts.
+
 ## API Endpoints
 
 ### User Endpoints
@@ -61,6 +69,8 @@ To run the tests, use `./mvnw test` (`mvnw.cmd test` on Windows).
         - `400 Bad Request`: User already exists
 
 ### Task Endpoints
+
+Send HTTP Basic credentials with every task request. Supply `startAt` and `endAt` as UTC date-times without a timezone suffix, for example `2027-01-10T15:00:00`.
 
 - **Create Task**
     - **URL:** `/tasks/`

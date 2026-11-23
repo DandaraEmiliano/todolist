@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class TaskControllerTests {
         var request = new MockHttpServletRequest();
         request.setAttribute("idUser", UUID.randomUUID());
 
-        var endAt = LocalDateTime.now().plusDays(1);
+        var endAt = LocalDateTime.now(ZoneOffset.UTC).plusDays(1);
         var task = new TaskModel();
         task.setEndAt(endAt);
         task.setStartAt(endAt.plusHours(1));
