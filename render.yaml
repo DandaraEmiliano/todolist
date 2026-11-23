@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: organiza-todolist
+    runtime: docker
+    plan: free
+    region: ohio
+    healthCheckPath: /actuator/health
+    autoDeployTrigger: "off"
+    envVars:
+      - key: SPRING_H2_CONSOLE_ENABLED
+        value: "false"

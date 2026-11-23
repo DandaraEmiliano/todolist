@@ -1,6 +1,7 @@
 package br.com.dandaraemiliano.todolist.task;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +31,7 @@ public class TaskController {
         var idUser = request.getAttribute("idUser");
         taskModel.setIdUser((UUID) idUser);
 
-        var currentDate = LocalDateTime.now();
+        var currentDate = LocalDateTime.now(ZoneOffset.UTC);
     
         if (currentDate.isAfter(taskModel.getStartAt()) || currentDate.isAfter(taskModel.getEndAt())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

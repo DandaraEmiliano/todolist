@@ -1,6 +1,7 @@
 package br.com.dandaraemiliano.todolist.filter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,39 +26,36 @@ public class FilterTaskAuth extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        var servletPath = request.getServletPath();
-        System.out.println("PATH " + servletPath);
-        if (servletPath.startsWith("/tasks/")) {
-
-            var authorization = request.getHeader("Authorization");
-
-            var authEncoded = authorization.substring("Basic".length()).trim();
-
-            byte[] authDecode = Base64.getDecoder().decode(authEncoded);
-
-            var authString = new String(authDecode);
-
-            String[] credentials = authString.split(":");
-            String username = credentials[0];
-            String password = credentials[1];
-
-            var user = this.userRepository.findByUsername(username);
-            
-            if (user == null) {
-                response.sendError(401);
-            } else {
-                var passwordVerify = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
-                if (passwordVerify.verified) {
-                    request.setAttribute("idUser", user.getId());
-                    filterChain.doFilter(request, response);
-                } else {
-                    response.sendError(401);
-                }
-            }
-        } else {
+        if (!request.getServletPath().startsWith("/tasks/")) {
             filterChain.doFilter(request, response);
+            return;
         }
 
+        var credentials = readCredentials(request.getHeader("Authorization"));
+        if (credentials.length != 2) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        var user = userRepository.findByUsername(credentials[0]);
+        if (user == null || !BCrypt.verifyer().verify(credentials[1].toCharArray(), user.getPassword()).verified) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        request.setAttribute("idUser", user.getId());
+        filterChain.doFilter(request, response);
     }
 
+    private String[] readCredentials(String header) {
+        if (header == null || !header.regionMatches(true, 0, "Basic ", 0, 6)) {
+            return new String[0];
+        }
+        try {
+            var decoded = Base64.getDecoder().decode(header.substring(6).trim());
+            return new String(decoded, StandardCharsets.UTF_8).split(":", 2);
+        } catch (IllegalArgumentException ex) {
+            return new String[0];
+        }
+    }
 }

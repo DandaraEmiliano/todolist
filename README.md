@@ -1,41 +1,53 @@
 # Task Management API
 
-This project is a REST API for task management built with Spring Boot. It provides endpoints for user authentication and CRUD operations for tasks.
+[Try the Organiza demo](https://todolist-q73i.onrender.com)
+
+This Spring Boot REST API lets users register and create, list, and update their own tasks. Task endpoints use HTTP Basic authentication.
 
 ## Requirements
 
-- Java 17
-- Maven
-- JPA / Hibernate
+- JDK 17
 - Docker (optional, for containerization)
-
-## Installation
-
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/dandaraemiliano/todolist.git
-    cd todolist
-    ```
-
-2. Build the project using Maven:
-    ```bash
-    mvn clean install
-    ```
-
-3. Alternatively, you can build and run the project using Docker:
-    ```bash
-    docker build -t todolist .
-    docker run -p 8080:8080 todolist
-    ```
 
 ## Running the Application
 
-1. To run the application locally, use the following Maven command:
-    ```bash
-    mvn spring-boot:run
-    ```
+Clone the repository and start the API with the included Maven Wrapper:
 
-2. Access the application at `http://localhost:8080`.
+```bash
+git clone https://github.com/DandaraEmiliano/todolist.git
+cd todolist
+./mvnw spring-boot:run
+```
+
+On Windows, run `mvnw.cmd spring-boot:run` from the repository directory. The API listens on `http://localhost:8080`. It uses an in-memory H2 database, so users and tasks are reset when the app stops.
+
+Open `http://localhost:8080` in a browser to try **Organiza**, the demo frontend. Choose **Usar exemplos** to create sample tasks or **Nova tarefa** to add your own. The demo creates a temporary account per browser session and displays task times in your local timezone.
+
+In a second terminal, register a demo user and list their tasks:
+
+```bash
+curl --fail --silent --show-error --output /dev/null \
+  --header 'Content-Type: application/json' \
+  --data '{"username":"demo","name":"Demo User","password":"demo-password"}' \
+  http://localhost:8080/users/
+
+curl --user demo:demo-password http://localhost:8080/tasks/
+```
+
+The second request returns `[]` for a newly registered user.
+
+To run the app with Docker:
+
+```bash
+docker build -t todolist .
+docker run --rm -p 8080:8080 todolist
+```
+
+To run the tests, use `./mvnw test` (`mvnw.cmd test` on Windows).
+
+## Deployment
+
+Run this repository as a Docker web service with the included `render.yaml` Blueprint. The health endpoint is `/actuator/health`. Treat the hosted app as a demo because its database is reset whenever the service restarts.
 
 ## API Endpoints
 
@@ -57,6 +69,8 @@ This project is a REST API for task management built with Spring Boot. It provid
         - `400 Bad Request`: User already exists
 
 ### Task Endpoints
+
+Send HTTP Basic credentials with every task request. Supply `startAt` and `endAt` as UTC date-times without a timezone suffix, for example `2027-01-10T15:00:00`.
 
 - **Create Task**
     - **URL:** `/tasks/`

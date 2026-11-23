@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Demo interativa da API de tarefas de Dandara Emiliano.">
+  <title>Organiza — Demo de tarefas</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Organiza</a>
+      <a class="source-link" href="https://github.com/DandaraEmiliano/todolist">Ver código no GitHub</a>
+    </div>
+  </header>
+  <main class="shell">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">DEMO INTERATIVA</p>
+        <h1 id="page-title">Minhas tarefas</h1>
+        <p>Planeje o que precisa fazer e acompanhe seus prazos.</p>
+      </div>
+      <button type="button" class="primary" id="new-task"><span aria-hidden="true">+</span> Nova tarefa</button>
+    </section>
+
+    <section class="summary" aria-label="Resumo das tarefas">
+      <div><span>Tarefas cadastradas</span><strong id="total">—</strong></div>
+      <div><span>Prioridade alta</span><strong id="high">—</strong></div>
+      <div><span>Prazo vencido</span><strong id="overdue">—</strong></div>
+    </section>
+
+    <section class="workspace" aria-labelledby="list-title">
+      <div class="section-header">
+        <h2 id="list-title">Lista de tarefas</h2>
+        <div class="actions">
+          <button type="button" class="secondary" id="examples">Usar exemplos</button>
+          <label class="filter-label"><span class="sr-only">Filtrar por prioridade</span>
+            <select id="priority-filter">
+              <option value="">Todas as prioridades</option>
+              <option value="alta">Alta</option>
+              <option value="media">Média</option>
+              <option value="baixa">Baixa</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <p id="feedback" role="status" hidden></p>
+      <ul id="task-list"></ul>
+      <p id="empty" class="empty" hidden></p>
+    </section>
+
+    <footer>Dados de demonstração. As tarefas são temporárias e podem ser apagadas quando o servidor reiniciar.</footer>
+  </main>
+
+  <dialog id="task-dialog" aria-labelledby="dialog-title">
+    <form id="task-form">
+      <div class="dialog-heading">
+        <h2 id="dialog-title">Nova tarefa</h2>
+        <button type="button" class="close" id="close-dialog" aria-label="Fechar">×</button>
+      </div>
+      <label>Título <input name="title" maxlength="50" required autofocus></label>
+      <label>Descrição <textarea name="description" rows="3" maxlength="255"></textarea></label>
+      <div class="date-fields">
+        <label>Início <input type="datetime-local" name="startAt" required></label>
+        <label>Término <input type="datetime-local" name="endAt" required></label>
+      </div>
+      <label>Prioridade
+        <select name="priority" required>
+          <option value="baixa">Baixa</option>
+          <option value="media" selected>Média</option>
+          <option value="alta">Alta</option>
+        </select>
+      </label>
+      <p id="form-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button type="button" class="secondary" id="cancel-dialog">Cancelar</button>
+        <button type="submit" class="primary" id="save-task">Salvar tarefa</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>
