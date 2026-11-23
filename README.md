@@ -1,41 +1,45 @@
 # Task Management API
 
-This project is a REST API for task management built with Spring Boot. It provides endpoints for user authentication and CRUD operations for tasks.
+This Spring Boot REST API lets users register and create, list, and update their own tasks. Task endpoints use HTTP Basic authentication.
 
 ## Requirements
 
-- Java 17
-- Maven
-- JPA / Hibernate
+- JDK 17
 - Docker (optional, for containerization)
-
-## Installation
-
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/dandaraemiliano/todolist.git
-    cd todolist
-    ```
-
-2. Build the project using Maven:
-    ```bash
-    mvn clean install
-    ```
-
-3. Alternatively, you can build and run the project using Docker:
-    ```bash
-    docker build -t todolist .
-    docker run -p 8080:8080 todolist
-    ```
 
 ## Running the Application
 
-1. To run the application locally, use the following Maven command:
-    ```bash
-    mvn spring-boot:run
-    ```
+Clone the repository and start the API with the included Maven Wrapper:
 
-2. Access the application at `http://localhost:8080`.
+```bash
+git clone https://github.com/DandaraEmiliano/todolist.git
+cd todolist
+./mvnw spring-boot:run
+```
+
+On Windows, run `mvnw.cmd spring-boot:run` from the repository directory. The API listens on `http://localhost:8080`. It uses an in-memory H2 database, so users and tasks are reset when the app stops.
+
+In a second terminal, register a demo user and list their tasks:
+
+```bash
+curl --fail --silent --show-error --output /dev/null \
+  --header 'Content-Type: application/json' \
+  --data '{"username":"demo","name":"Demo User","password":"demo-password"}' \
+  http://localhost:8080/users/
+
+curl --user demo:demo-password http://localhost:8080/tasks/
+```
+
+The second request returns `[]` for a newly registered user.
+
+To run the app with Docker:
+
+```bash
+docker build -t todolist .
+docker run --rm -p 8080:8080 todolist
+```
+
+To run the tests, use `./mvnw test` (`mvnw.cmd test` on Windows).
 
 ## API Endpoints
 
